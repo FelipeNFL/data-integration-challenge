@@ -13,6 +13,7 @@ type Company struct {
 	ID        uint           `gorm:"primaryKey"`
 	Name string
 	Zipcode string
+	Website string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`

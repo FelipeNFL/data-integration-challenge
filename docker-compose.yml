@@ -1,11 +1,13 @@
 version: "2.1"
 
 services:
-    integrate-api:
+    integration-api:
         build: .
-        tty: true
+        command: go run integration_api.go
         volumes:
             - ./:/go/yawoen
+        ports: 
+            - 8080:8080
         environment: 
             POSTGRES_PASSWORD: jGeiFaFCC!mP
             POSTGRES_DB_NAME: yawoen

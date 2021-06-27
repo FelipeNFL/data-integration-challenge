@@ -1,12 +1,10 @@
 package main
 
 import (
-	"io"
     "os"
-    "fmt"
 	"log"
+	"fmt"
 	"strings"
-    "encoding/csv"
 	"yawoen/core"
 	"gorm.io/gorm"
 )
@@ -14,16 +12,14 @@ import (
 const fileNameData = "data/q1_catalog.csv"
 const separator = ';'
 
-func getCsv(filename string, separator rune) (*csv.Reader, *os.File) {
-	csvFile, err := os.Open(filename)
+func openFile(filename string) (*os.File) {
+	file, err := os.Open(filename)
 	
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	reader := csv.NewReader(csvFile)
-	reader.Comma = separator
-	return reader, csvFile
+	return file
 }
 
 func getDb() (*gorm.DB) {
@@ -34,22 +30,19 @@ func getDb() (*gorm.DB) {
 
 func main() {
 	db := getDb()
-	reader, csvFile := getCsv(fileNameData, separator)
+	file := openFile(fileNameData)
+	reader := core.GetCsvReaderFromFile(file, separator)
 
-	for {
-		record, err := reader.Read()
-		
-		if err == io.EOF {
-			break
-		}
-		
-		if err != nil {
-			log.Fatal(err)
-		}
-
+	core.IterateCsv(reader, func (record []string) {
 		row := core.Company{Name: strings.ToUpper(record[0]), Zipcode: record[1]}
 		result := db.Create(&row)
-	}
 
-	defer csvFile.Close()
+		if result.Error == nil {
+			fmt.Println(row.Name + " inserted!")
+		} else {
+			fmt.Println("Error to insert company "+row.Name)
+		}
+	})
+
+	defer file.Close()
 }

@@ -11,4 +11,7 @@ COPY . $SRC_PATH
 
 # RUN go get -d -v
 
-# RUN go build main.go
+RUN go build integration_api.go
+RUN go build scripts/populate_db.go
+
+EXPOSE 8080
