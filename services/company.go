@@ -20,18 +20,26 @@ func UpdateCompany(w http.ResponseWriter, r *http.Request) {
     csvContent := buffer.String()
 
 	reader := core.GetCsvReaderFromString(csvContent, separatorCsv)
+
+	registersChanged := []core.Company{}
 	
 	core.IterateCsv(reader, func(record []string) {
 		name := strings.ToUpper(record[0])
 		zipcode := strings.ToUpper(record[1])
-		result := db.Model(&core.Company{}).Where("name = ? AND zipcode = ?", name, zipcode).Update("website", record[2])
+		company := core.Company{}
+		result := db.Model(&company).Where("name = ? AND zipcode = ?", name, zipcode).Update("website", record[2])
 
-		if result.RowsAffected == 0 {
-			w.WriteHeader(http.StatusNotModified)
-		} else {
+		if result.RowsAffected > 0 {
+			registersChanged = append(registersChanged, company)	
 			log.Println("Company "+name+" just have your website updated!")
 		}
 	})
+
+	if len(registersChanged) == 0 {
+		w.WriteHeader(http.StatusNotModified)
+	}
+
+	json.NewEncoder(w).Encode(registersChanged)
 }
 
 func GetCompanyByNameAndZipCode(w http.ResponseWriter, r *http.Request) {
