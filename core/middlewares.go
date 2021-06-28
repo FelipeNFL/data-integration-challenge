@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"bytes"
+	"context"
 	"net/http"
 )
 
@@ -25,7 +26,7 @@ func ParseBodyMiddleware(next http.Handler) http.Handler {
 
 func SetDbMiddleware(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		db, err := core.GetDb()
+		db, err := GetDb()
 
 		if err != nil {
 			log.Fatal(err)

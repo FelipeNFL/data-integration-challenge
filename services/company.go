@@ -5,8 +5,9 @@ import (
 	"bytes"
 	"strings"
 	"net/http"
-	"yawoen/core"
+	"encoding/json"	
 	"gorm.io/gorm"
+	"yawoen/core"
 )
 
 const separatorCsv = ';'
@@ -31,4 +32,25 @@ func UpdateCompany(w http.ResponseWriter, r *http.Request) {
 			log.Println("Company "+name+" just have your website updated!")
 		}
 	})
+}
+
+func GetCompanyByNameAndZipCode(w http.ResponseWriter, r *http.Request) {
+    db := r.Context().Value("DB").(*gorm.DB)
+
+	queryString := r.URL.Query()
+	name := queryString.Get("name")
+	zipcode := queryString.Get("zipcode")
+
+	likeQueryName := strings.ToUpper(name) + "%"
+
+	company := core.Company{}
+
+	result := db.Where("zipcode = ? AND name LIKE ?", zipcode, likeQueryName).Find(&company)
+	
+	if result.RowsAffected == 0 {
+		w.WriteHeader(http.StatusNotFound)
+	} else {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(company)
+	}
 }

@@ -1,7 +1,7 @@
 #Challenge Makefile
 
 start:
-#TODO: commands necessary to start the API
+	docker-compose up --build -d
 
 check:
 #TODO: include command to test the code and show the results

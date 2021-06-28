@@ -9,9 +9,9 @@ RUN apk --no-cache add git gcc libc-dev
 
 COPY . $SRC_PATH
 
-# RUN go get -d -v
-
-RUN go build integration_api.go
+RUN go build apis/matching_api.go
+RUN go build apis/integration_api.go
 RUN go build scripts/populate_db.go
 
 EXPOSE 8080
+EXPOSE 8081

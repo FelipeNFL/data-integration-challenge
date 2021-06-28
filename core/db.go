@@ -4,20 +4,9 @@ import (
 	"os"
 	"fmt"
 	"log"
-	"time"
 	"gorm.io/gorm"
   	"gorm.io/driver/postgres"
 )
-
-type Company struct {
-	ID        uint           `gorm:"primaryKey"`
-	Name string
-	Zipcode string
-	Website string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
-}
 
 func GetDb() (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s",

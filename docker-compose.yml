@@ -3,7 +3,7 @@ version: "2.1"
 services:
     integration-api:
         build: .
-        command: go run integration_api.go
+        command: go run apis/integration_api.go
         volumes:
             - ./:/go/yawoen
         ports: 
@@ -14,6 +14,22 @@ services:
             POSTGRES_USER: yawoen_api
             POSTGRES_HOST: db
             POSTGRES_PORT: 5432
+            API_PORT: 8080
+
+    matching-api:
+        build: .
+        command: go run apis/matching_api.go
+        volumes:
+            - ./:/go/yawoen
+        ports: 
+            - 8081:8081
+        environment: 
+            POSTGRES_PASSWORD: jGeiFaFCC!mP
+            POSTGRES_DB_NAME: yawoen
+            POSTGRES_USER: yawoen_api
+            POSTGRES_HOST: db
+            POSTGRES_PORT: 5432
+            API_PORT: 8081
 
     db:
         image: postgres:13-alpine
