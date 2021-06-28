@@ -38,3 +38,21 @@ services:
             POSTGRES_PASSWORD: jGeiFaFCC!mP
             POSTGRES_USER: yawoen_api
             POSTGRES_DB: yawoen
+
+    integration_api_docs:
+        image: swaggerapi/swagger-ui
+        ports:
+            - 8082:8080
+        environment:
+            SWAGGER_JSON: '/docs/integration_api.json'
+        volumes: 
+            - ./docs:/docs
+
+    matching_api_docs:
+        image: swaggerapi/swagger-ui
+        ports:
+            - 8083:8080
+        environment:
+            SWAGGER_JSON: '/docs/matching_api.json'
+        volumes: 
+            - ./docs:/docs

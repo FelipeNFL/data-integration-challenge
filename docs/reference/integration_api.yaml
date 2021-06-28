@@ -1,0 +1,55 @@
+swagger: "2.0"
+info:
+  description: "API para integrar dados de uma base pré-existente a partir de uma entrada CSV"
+  version: "1.0.0"
+  title: "Yawoen Integration API"
+schemes:
+- "http"
+paths:
+  /company:
+    put:
+      summary: "Atualizar website de empresa"
+      description: "A partir de uma entrada CSV, é possível adicionar o campo 'website' ao dados pré-carregados no banco de dados. A estrutura de entrada é 'nome;cep;website', sendo que Nome e CEP são utilizados para encontrar a empresa e website para atualizar o campo. Sendo um CSV, é possível atualizar um lote de registros, se estes estiverem separados por quebra de linha."
+      operationId: "updatePet"
+      consumes:
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        description: "CSV com websites para integrar dados pré-populados no banco de dados"
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "Pelo menos uma empresa da lista foi modificada com sucesso"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Empresa"
+        "304":
+          description: "Nenhuma empresa modificada"
+  /health:
+    get:
+      summary: "Disponibilidade do serviço"
+      description: "Pode ser utilizado para testar se o serviço já foi iniciado"
+      responses:
+        "200": 
+          description: "Serviço online"
+        
+definitions:
+  Empresa:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      zipcode:
+        type: "string"
+      website:
+        type: "string"
+    xml:
+      name: "Order"

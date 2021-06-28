@@ -1,0 +1,55 @@
+swagger: "2.0"
+info:
+  description: "API para consultar dados integrados na base de dados de empresas"
+  version: "1.0.0"
+  title: "Yawoen Matching API"
+schemes:
+- "http"
+paths:
+  /company:
+    get:
+      summary: "Consultar dados de empresa"
+      description: "Retorna dados completos de uma empresa da base de dados a partir do nome e CEP."
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "query"
+        required: true
+        description: "Nome da empresa (pode ser apenas os caracteres iniciais. Exemplo: 'L2P Motos' pode ser apenas 'L2P')"
+        type: "string"
+      - name: "zipcode"
+        in: "query"
+        required: true
+        description: "CEP da empresa (5 dígitos numéricos)"
+        type: "string"
+      responses:
+        "200":
+          description: "Empresa localizada"
+          schema:
+            items:
+              $ref: "#/definitions/Empresa"
+        "404":
+          description: "Nenhuma empresa encontrada"
+  /health:
+    get:
+      summary: "Disponibilidade do serviço"
+      description: "Pode ser utilizado para testar se o serviço já foi iniciado"
+      responses:
+        "200": 
+          description: "Serviço online"
+        
+definitions:
+  Empresa:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      zipcode:
+        type: "string"
+      website:
+        type: "string"
+    xml:
+      name: "Order"
