@@ -28,3 +28,13 @@ func InitializeDb() {
 
 	db.AutoMigrate(&Company{})
 }
+
+func CleanDb() {
+	db, err := GetDb()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&Company{})
+}

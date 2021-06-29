@@ -26,11 +26,16 @@ func UpdateCompany(w http.ResponseWriter, r *http.Request) {
 	core.IterateCsv(reader, func(record []string) {
 		name := strings.ToUpper(record[0])
 		zipcode := strings.ToUpper(record[1])
+		website := strings.ToLower(record[2])
+
 		company := core.Company{}
-		result := db.Model(&company).Where("name = ? AND zipcode = ?", name, zipcode).Update("website", record[2])
+		result := db.Model(&company).Where("name = ? AND zipcode = ?", name, zipcode).Update("website", website)
 
 		if result.RowsAffected > 0 {
-			registersChanged = append(registersChanged, company)	
+			companyUpdated := core.Company{}
+			db.Model(&company).Where("name = ? AND zipcode = ?", name, zipcode).First(&companyUpdated)
+			registersChanged = append(registersChanged, companyUpdated)	
+			
 			log.Println("Company "+name+" just have your website updated!")
 		}
 	})
@@ -50,9 +55,7 @@ func GetCompanyByNameAndZipCode(w http.ResponseWriter, r *http.Request) {
 	zipcode := queryString.Get("zipcode")
 
 	likeQueryName := strings.ToUpper(name) + "%"
-
 	company := core.Company{}
-
 	result := db.Where("zipcode = ? AND name LIKE ?", zipcode, likeQueryName).Find(&company)
 	
 	if result.RowsAffected == 0 {

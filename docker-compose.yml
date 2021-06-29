@@ -39,7 +39,7 @@ services:
             POSTGRES_USER: yawoen_api
             POSTGRES_DB: yawoen
 
-    integration_api_docs:
+    integration-api-docs:
         image: swaggerapi/swagger-ui
         ports:
             - 8082:8080
@@ -48,7 +48,7 @@ services:
         volumes: 
             - ./docs:/docs
 
-    matching_api_docs:
+    matching-api-docs:
         image: swaggerapi/swagger-ui
         ports:
             - 8083:8080
