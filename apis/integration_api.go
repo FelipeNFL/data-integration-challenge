@@ -13,7 +13,7 @@ func main() {
 	health := core.Endpoint{ Path: "/health", Function: services.Health, MethodHttp: http.MethodGet }
 	endpoints := []core.Endpoint{ updateCompany , health }
 
-	middlewares := []mux.MiddlewareFunc{ core.SetDbMiddleware, core.ParseBodyMiddleware }
+	middlewares := []mux.MiddlewareFunc{ core.SetDbMiddleware, core.ParseBodyMiddleware, core.LoggingMiddleware }
 
 	port := os.Getenv("API_PORT")
 

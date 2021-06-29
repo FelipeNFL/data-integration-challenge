@@ -2,10 +2,12 @@ package core
 
 import (
 	"io"
+	"os"
 	"log"
 	"bytes"
 	"context"
 	"net/http"
+	"github.com/gorilla/handlers"
 )
 
 func ParseBodyMiddleware(next http.Handler) http.Handler {
@@ -35,4 +37,8 @@ func SetDbMiddleware(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), "DB", db)
 		next.ServeHTTP(w, r.WithContext(ctx))
     })
+}
+
+func LoggingMiddleware(next http.Handler) http.Handler {
+    return handlers.LoggingHandler(os.Stdout, next)
 }
