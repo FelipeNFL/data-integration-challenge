@@ -28,12 +28,12 @@ func IterateCsv(csvReader *csv.Reader, ignoreHeader bool, toDo functionToBeExecu
 	for {
 		counter++
 
+		record, err := csvReader.Read()
+
 		if ignoreHeader && counter == 1 {
 			continue
 		}
 
-		record, err := csvReader.Read()
-		
 		if err == io.EOF {
 			break
 		}

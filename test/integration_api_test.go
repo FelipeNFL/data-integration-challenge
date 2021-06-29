@@ -121,6 +121,31 @@ func TestUpdateCompanyExistingIgnoringHeader(t *testing.T) {
 	}
 }
 
+func TestUpdateCompanyExistingWithoutHeaderControl(t *testing.T) {
+	createRow(core.Company{Name: "NOME", Zipcode: "CEP"})	
+
+	url := HOST + "/company"
+	data := strings.NewReader("nome;cep;website\ntest;12345;WWW.GOOGLE.COM")
+	resp := DoPut(url, data, t)
+
+	if resp.StatusCode != 200 {
+		t.Errorf("status code wrong")
+	}
+
+	company := core.Company{}
+	db, err := core.GetDb()
+
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	db.Where("zipcode = 'CEP' AND name = 'NOME'").Find(&company)
+
+	if company.Website != "website" {
+		t.Errorf("website wrong: "+company.Website)
+	}
+}
+
 func TestUpdateCompanyNotFound(t *testing.T) {
 	url := HOST + "/company?ignore_header=false"
 	data := strings.NewReader("wrong;12345;WWW.GOOGLE.COM")

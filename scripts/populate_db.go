@@ -36,7 +36,7 @@ func main() {
 	ignoreHeader := false
 
 	if len(os.Args) > 1 {
-		ignoreHeader = os.Args[1] == "ignoreHeader"
+		ignoreHeader = os.Args[1] == "--ignoreHeader"
 	}
 
 	core.IterateCsv(reader, ignoreHeader, func (record []string) {

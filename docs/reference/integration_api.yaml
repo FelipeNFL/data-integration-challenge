@@ -22,6 +22,13 @@ paths:
         description: "CSV com websites para integrar dados pré-populados no banco de dados"
         schema:
           type: "string"
+      - in: "query"
+        name: "ignore_header"
+        required: true
+        description: "Ignorar primeira linha do CSV (caso seja um cabeçalho)"
+        default: false
+        schema:
+          type: "boolean"
       responses:
         "200":
           description: "Pelo menos uma empresa da lista foi modificada com sucesso"

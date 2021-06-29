@@ -1,1 +1,1 @@
-go run scripts/populate_db.go
+go run scripts/populate_db.go --ignoreHeader

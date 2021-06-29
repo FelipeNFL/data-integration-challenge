@@ -38,6 +38,8 @@ func UpdateCompany(w http.ResponseWriter, r *http.Request) {
 			registersChanged = append(registersChanged, companyUpdated)	
 			
 			log.Println("Company "+name+" just have your website updated!")
+		} else {
+			log.Println("Company "+name+" not found")
 		}
 	})
 

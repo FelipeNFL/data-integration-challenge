@@ -29,6 +29,16 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "query",
+            "name": "ignore_header",
+            "required": true,
+            "description": "Ignorar primeira linha do CSV (caso seja um cabeçalho)",
+            "default": false,
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
