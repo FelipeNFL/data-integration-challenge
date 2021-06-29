@@ -1,0 +1,1 @@
+go run scripts/populate_db.go
