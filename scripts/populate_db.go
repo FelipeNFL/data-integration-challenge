@@ -24,6 +24,7 @@ func openFile(filename string) (*os.File) {
 
 func getDb() (*gorm.DB) {
 	db, _ := core.GetDb()
+	core.CleanDb()
 	core.InitializeDb()
 	return db
 }
@@ -32,8 +33,13 @@ func main() {
 	db := getDb()
 	file := openFile(fileNameData)
 	reader := core.GetCsvReaderFromFile(file, separator)
+	ignoreHeader := false
 
-	core.IterateCsv(reader, func (record []string) {
+	if len(os.Args) > 1 {
+		ignoreHeader = os.Args[1] == "ignoreHeader"
+	}
+
+	core.IterateCsv(reader, ignoreHeader, func (record []string) {
 		row := core.Company{Name: strings.ToUpper(record[0]), Zipcode: record[1]}
 		result := db.Create(&row)
 

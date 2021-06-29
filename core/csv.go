@@ -22,8 +22,16 @@ func GetCsvReaderFromString(text string, separator rune) (*csv.Reader) {
 	return reader
 }
 
-func IterateCsv(csvReader *csv.Reader, toDo functionToBeExecutedOnRow) {
+func IterateCsv(csvReader *csv.Reader, ignoreHeader bool, toDo functionToBeExecutedOnRow) {
+	counter := 0
+
 	for {
+		counter++
+
+		if ignoreHeader && counter == 1 {
+			continue
+		}
+
 		record, err := csvReader.Read()
 		
 		if err == io.EOF {

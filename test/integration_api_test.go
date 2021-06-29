@@ -11,12 +11,15 @@ import (
 
 const HOST = "http://localhost:8080"
 
+func createRow(row core.Company) {
+	db, _ := core.GetDb()
+	db.Create(&row)
+}
+
 func setup() {
 	core.CleanDb()
 	core.InitializeDb()
-	row := core.Company{Name: "TEST", Zipcode: "12345"}
-	db, _ := core.GetDb()
-	db.Create(&row)
+	createRow(core.Company{Name: "TEST", Zipcode: "12345"})	
 }
 
 func shutdown() {
@@ -48,7 +51,7 @@ func DoPut(url string, data *strings.Reader, t *testing.T) (*http.Response) {
 }
 
 func TestUpdateCompanyExisting(t *testing.T) {
-	url := HOST + "/company"
+	url := HOST + "/company?ignore_header=false"
 	data := strings.NewReader("test;12345;www.google.com")
 	resp := DoPut(url, data, t)
 
@@ -71,7 +74,7 @@ func TestUpdateCompanyExisting(t *testing.T) {
 }
 
 func TestUpdateCompanyExistingWithUpperCaseWebSite(t *testing.T) {
-	url := HOST + "/company"
+	url := HOST + "/company?ignore_header=false"
 	data := strings.NewReader("test;12345;WWW.GOOGLE.COM")
 	resp := DoPut(url, data, t)
 
@@ -93,8 +96,33 @@ func TestUpdateCompanyExistingWithUpperCaseWebSite(t *testing.T) {
 	}
 }
 
+func TestUpdateCompanyExistingIgnoringHeader(t *testing.T) {
+	createRow(core.Company{Name: "nome", Zipcode: "cep"})	
+
+	url := HOST + "/company?ignore_header=true"
+	data := strings.NewReader("nome;cep;website\ntest;12345;WWW.GOOGLE.COM")
+	resp := DoPut(url, data, t)
+
+	if resp.StatusCode != 200 {
+		t.Errorf("status code wrong")
+	}
+
+	company := core.Company{}
+	db, err := core.GetDb()
+
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	db.Where("zipcode = 'cep' AND name = 'nome'").Find(&company)
+
+	if company.Website == "website" {
+		t.Errorf("website wrong: "+company.Website)
+	}
+}
+
 func TestUpdateCompanyNotFound(t *testing.T) {
-	url := HOST + "/company"
+	url := HOST + "/company?ignore_header=false"
 	data := strings.NewReader("wrong;12345;WWW.GOOGLE.COM")
 	resp := DoPut(url, data, t)
 

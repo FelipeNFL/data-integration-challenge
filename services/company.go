@@ -15,6 +15,8 @@ const separatorCsv = ';'
 func UpdateCompany(w http.ResponseWriter, r *http.Request) {
     db := r.Context().Value("DB").(*gorm.DB)
 
+	ignoreHeader := r.URL.Query().Get("ignore_header") == "true"
+
 	buffer := new(bytes.Buffer)
     buffer.ReadFrom(r.Body)
     csvContent := buffer.String()
@@ -23,17 +25,16 @@ func UpdateCompany(w http.ResponseWriter, r *http.Request) {
 
 	registersChanged := []core.Company{}
 	
-	core.IterateCsv(reader, func(record []string) {
+	core.IterateCsv(reader, ignoreHeader, func(record []string) {
 		name := strings.ToUpper(record[0])
 		zipcode := strings.ToUpper(record[1])
 		website := strings.ToLower(record[2])
 
-		company := core.Company{}
-		result := db.Model(&company).Where("name = ? AND zipcode = ?", name, zipcode).Update("website", website)
+		result := db.Model(&core.Company{}).Where("name = ? AND zipcode = ?", name, zipcode).Update("website", website)
 
 		if result.RowsAffected > 0 {
 			companyUpdated := core.Company{}
-			db.Model(&company).Where("name = ? AND zipcode = ?", name, zipcode).First(&companyUpdated)
+			db.Model(&core.Company{}).Where("name = ? AND zipcode = ?", name, zipcode).First(&companyUpdated)
 			registersChanged = append(registersChanged, companyUpdated)	
 			
 			log.Println("Company "+name+" just have your website updated!")
@@ -43,7 +44,8 @@ func UpdateCompany(w http.ResponseWriter, r *http.Request) {
 	if len(registersChanged) == 0 {
 		w.WriteHeader(http.StatusNotModified)
 	}
-
+	
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(registersChanged)
 }
 
